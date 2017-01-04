@@ -60,7 +60,8 @@ import glob
     vocab_size = 10000
 '''
 
-WORK_DIR = 'data-lyrics'
+WORK_DIR = 'data-text8'
+#WORK_DIR = 'data-lyrics'
 #WORK_DIR = 'data-eminescu'
 
 nn_config = {
@@ -75,8 +76,8 @@ nn_config = {
 }
 
 train_config = {
-    'max_max_epoch': 50,
-    'max_epoch': 40,
+    'max_max_epoch': 5,
+    'max_epoch': 4,
     'learning_rate': 1.0,
     'lr_decay': 0.6
 }

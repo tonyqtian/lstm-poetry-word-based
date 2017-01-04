@@ -22,7 +22,7 @@ class TextProcessor(object):
 
     def create_vocab(self, size):
         counter = collections.Counter(self.words)
-        print 'Vocabulary size reduced from %s to %s' % (len(counter), size)
+        print( 'Vocabulary size reduced from %s to %s' % (len(counter), size) )
         count_pairs = counter.most_common(size-1)
         self.id2word = dict(count_pairs).keys()
         self.id2word[-1] = '<unk>'

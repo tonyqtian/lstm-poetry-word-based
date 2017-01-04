@@ -1,3 +1,4 @@
 *.pyc
 *.ckpt*
 data-lyrics/input.*
+data-text8/
