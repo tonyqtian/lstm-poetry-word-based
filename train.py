@@ -1,5 +1,4 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+#!/usr/bin/python3
 
 from __future__ import division
 from __future__ import print_function
@@ -60,7 +59,7 @@ import glob
     vocab_size = 10000
 '''
 
-WORK_DIR = 'data-text8'
+WORK_DIR = 'data-test'
 #WORK_DIR = 'data-lyrics'
 #WORK_DIR = 'data-eminescu'
 
@@ -68,11 +67,11 @@ nn_config = {
     'init_scale': 0.1,
     'max_grad_norm': 5,
     'num_layers': 2,
-    'num_steps': 30,
+    'num_steps': 3,
     'hidden_size': 400,
     'keep_prob': .6,
-    'batch_size': 20,
-    'vocab_size': 15000
+    'batch_size': 2,
+    'vocab_size': 150
 }
 
 train_config = {
@@ -88,7 +87,9 @@ def run_epoch(session, m, data, eval_op, verbose=False):
     start_time = time.time()
     costs = 0.0
     iters = 0
-    state = m.initial_state.eval()
+    #print(m.initial_state)
+    #state = m.initial_state.eval()
+    state = session.run(m.initial_state)
     for step, (x, y) in enumerate(reader.train_iterator(data, m.batch_size,
                                                       m.num_steps)):
         cost, state, _ = session.run([m.cost, m.final_state, eval_op],
@@ -109,7 +110,7 @@ def run_epoch(session, m, data, eval_op, verbose=False):
 def main():
 
     # cleanup input dir
-    ret = raw_input('Are you sure you want to clean %s [yes|no] ' % (WORK_DIR,))
+    ret = input('Are you sure you want to clean %s [yes|no] ' % (WORK_DIR,))
     if ret == 'yes':
         for f in glob.glob(os.path.join(WORK_DIR, '*')):
             if not f.endswith('.txt'):
@@ -119,7 +120,7 @@ def main():
     config = namedtuple('TrainConfig', train_config.keys())(*train_config.values())
     model_config = namedtuple('ModelConfig', nn_config.keys())(*nn_config.values())
 
-    with open(os.path.join(WORK_DIR, 'config.json'), 'wb') as fh:
+    with open(os.path.join(WORK_DIR, 'config.json'), 'w') as fh:
         json.dump(nn_config, fh)
 
     proc = reader.TextProcessor.from_file(os.path.join(WORK_DIR, 'input.txt'))
@@ -134,8 +135,8 @@ def main():
         with tf.variable_scope('model', reuse=None, initializer=initializer):
             m = model.Model(is_training=True, config=model_config)
 
-        tf.initialize_all_variables().run()
-        saver = tf.train.Saver(tf.all_variables())
+        tf.global_variables_initializer().run()
+        saver = tf.train.Saver(tf.global_variables())
 
         for i in range(config.max_max_epoch):
             lr_decay = config.lr_decay ** max(i - config.max_epoch, 0.0)

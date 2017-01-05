@@ -6,7 +6,7 @@ import re
 class TextProcessor(object):
     @staticmethod
     def from_file(input_file):
-        with open(input_file, 'rb') as fh:
+        with open(input_file, 'r') as fh:
             text = fh.read()
         return TextProcessor(text)
 
@@ -24,7 +24,7 @@ class TextProcessor(object):
         counter = collections.Counter(self.words)
         print( 'Vocabulary size reduced from %s to %s' % (len(counter), size) )
         count_pairs = counter.most_common(size-1)
-        self.id2word = dict(count_pairs).keys()
+        self.id2word = list(dict(count_pairs).keys())
         self.id2word[-1] = '<unk>'
         self.word2id = dict(zip(self.id2word, range(len(self.id2word))))
 
@@ -34,7 +34,7 @@ class TextProcessor(object):
         return self.vector
 
     def save_converted(self, filename):
-        with open(filename, 'wb') as fh:
+        with open(filename, 'w') as fh:
             for wid in self.vector:
                 fh.write(self.id2word[wid]+' ')
 

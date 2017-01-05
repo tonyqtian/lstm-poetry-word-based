@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tensorflow.models.rnn import rnn
+#from tensorflow.models.rnn_cell import rnn
 
 
 class Model(object):
@@ -33,7 +33,7 @@ class Model(object):
 
         inputs = [tf.squeeze(input_, [1])
                   for input_ in tf.split(1, num_steps, inputs)]
-        outputs, state = rnn.rnn(cell, inputs, initial_state=self._initial_state)
+        outputs, state = tf.nn.rnn(cell, inputs, initial_state=self._initial_state)
 
         output = tf.reshape(tf.concat(1, outputs), [-1, size])
         softmax_w = tf.get_variable('softmax_w', [size, vocab_size])
