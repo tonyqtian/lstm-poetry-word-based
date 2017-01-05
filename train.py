@@ -59,7 +59,7 @@ import glob
     vocab_size = 10000
 '''
 
-WORK_DIR = 'data-test'
+WORK_DIR = 'data-text8'
 #WORK_DIR = 'data-lyrics'
 #WORK_DIR = 'data-eminescu'
 
@@ -67,16 +67,16 @@ nn_config = {
     'init_scale': 0.1,
     'max_grad_norm': 5,
     'num_layers': 2,
-    'num_steps': 3,
+    'num_steps': 30,
     'hidden_size': 400,
     'keep_prob': .6,
-    'batch_size': 2,
+    'batch_size': 20,
     'vocab_size': 150
 }
 
 train_config = {
-    'max_max_epoch': 5,
-    'max_epoch': 4,
+    'max_max_epoch': 15,
+    'max_epoch': 10,
     'learning_rate': 1.0,
     'lr_decay': 0.6
 }

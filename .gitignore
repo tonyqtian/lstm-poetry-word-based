@@ -4,3 +4,4 @@ data-lyrics/input.*
 data-text8/
 /.project
 /.pydevproject
+/data-test/
