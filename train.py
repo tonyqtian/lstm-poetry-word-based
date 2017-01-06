@@ -59,7 +59,7 @@ import glob
     vocab_size = 10000
 '''
 
-WORK_DIR = 'data-text8'
+WORK_DIR = 'data-test'
 #WORK_DIR = 'data-lyrics'
 #WORK_DIR = 'data-eminescu'
 
@@ -67,10 +67,10 @@ nn_config = {
     'init_scale': 0.1,
     'max_grad_norm': 5,
     'num_layers': 2,
-    'num_steps': 30,
+    'num_steps': 3,
     'hidden_size': 400,
     'keep_prob': .6,
-    'batch_size': 20,
+    'batch_size': 2,
     'vocab_size': 150
 }
 
@@ -87,7 +87,6 @@ def run_epoch(session, m, data, eval_op, verbose=False):
     start_time = time.time()
     costs = 0.0
     iters = 0
-    #print(m.initial_state)
     #state = m.initial_state.eval()
     state = session.run(m.initial_state)
     for step, (x, y) in enumerate(reader.train_iterator(data, m.batch_size,
@@ -110,7 +109,8 @@ def run_epoch(session, m, data, eval_op, verbose=False):
 def main():
 
     # cleanup input dir
-    ret = input('Are you sure you want to clean %s [yes|no] ' % (WORK_DIR,))
+    #ret = input('Are you sure you want to clean %s [yes|no] ' % (WORK_DIR,))
+    ret = 'yes'
     if ret == 'yes':
         for f in glob.glob(os.path.join(WORK_DIR, '*')):
             if not f.endswith('.txt'):
@@ -126,10 +126,12 @@ def main():
     proc = reader.TextProcessor.from_file(os.path.join(WORK_DIR, 'input.txt'))
     proc.create_vocab(model_config.vocab_size)
     train_data = proc.get_vector()
+    print(train_data)
     np.save(os.path.join(WORK_DIR, 'vocab.npy'), np.array(proc.id2word))
     proc.save_converted(os.path.join(WORK_DIR, 'input.conv.txt'))
 
     with tf.Graph().as_default(), tf.Session() as session:
+        logwriter = tf.summary.FileWriter(WORK_DIR, session.graph)
         initializer = tf.random_uniform_initializer(-model_config.init_scale,
                                                     model_config.init_scale)
         with tf.variable_scope('model', reuse=None, initializer=initializer):
@@ -146,6 +148,9 @@ def main():
             train_perplexity = run_epoch(session, m, train_data, m.train_op,
                                          verbose=True)
             print("Epoch: %d Train Perplexity: %.3f" % (i + 1, train_perplexity))
+            tf.summary.scalar('perplexity', train_perplexity)
+            log_merge = session.run(tf.summary.merge_all())
+            logwriter.add_summary(log_merge)
 
             ckp_path = os.path.join(WORK_DIR, 'model.ckpt')
             saver.save(session, ckp_path, global_step=i)

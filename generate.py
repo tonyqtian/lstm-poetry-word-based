@@ -1,5 +1,4 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
+#!/usr/bin/python3
 
 from __future__ import division
 from __future__ import print_function
@@ -16,8 +15,8 @@ from collections import namedtuple
 
 from model import Model
 
-
-WORK_DIR = 'data-lyrics'
+WORK_DIR = 'data-test'
+#WORK_DIR = 'data-lyrics'
 #WORK_DIR = 'data-eminescu'
 
 TEMPERATURE = .7
@@ -57,7 +56,7 @@ def main(_):
         id2word = np.load(fh).tolist()
     word2id = dict(zip(id2word, range(len(id2word))))
 
-    with open(os.path.join(WORK_DIR, 'config.json'), 'rb') as fh:
+    with open(os.path.join(WORK_DIR, 'config.json'), 'r') as fh:
         d = json.load(fh)
     d['batch_size'] = 1
     d['num_steps'] = 1
@@ -69,12 +68,12 @@ def main(_):
         with tf.variable_scope("model", reuse=None, initializer=initializer):
             m = Model(is_training=False, config=config)
 
-        tf.initialize_all_variables().run()
-        saver = tf.train.Saver(tf.all_variables())
+        tf.global_variables_initializer().run()
+        saver = tf.train.Saver(tf.global_variables())
         ckpt = tf.train.get_checkpoint_state(WORK_DIR)
         saver.restore(session, ckpt.model_checkpoint_path)
 
-        state = m.initial_state.eval()
+        state = session.run(m.initial_state)
 
         data = reader.TextProcessor(INI_TEXT).set_vocab(word2id).get_vector()
         sys.stdout.write(INI_TEXT)
