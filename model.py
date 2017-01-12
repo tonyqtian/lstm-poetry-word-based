@@ -9,7 +9,7 @@ class Model(object):
         self.num_steps = num_steps = config.num_steps
         size = config.hidden_size
         vocab_size = config.vocab_size
-
+        
         self._input_data = tf.placeholder(tf.int32, [batch_size, num_steps])
         self._targets = tf.placeholder(tf.int32, [batch_size, num_steps])
 
@@ -30,10 +30,11 @@ class Model(object):
 
         if is_training and config.keep_prob < 1:
             inputs = tf.nn.dropout(inputs, config.keep_prob)
-
-        inputs = [tf.squeeze(input_, [1])
-                  for input_ in tf.split(1, num_steps, inputs)]
-        outputs, state = tf.nn.rnn(cell, inputs, initial_state=self._initial_state)
+        
+#         inputs = [tf.squeeze(input_, [1])
+#                   for input_ in tf.split(1, num_steps, inputs)]
+#         outputs, state = tf.nn.rnn(cell, inputs, initial_state=self._initial_state)
+        outputs, state = tf.nn.dynamic_rnn(cell, inputs, initial_state=self._initial_state)
 
         output = tf.reshape(tf.concat(1, outputs), [-1, size])
         softmax_w = tf.get_variable('softmax_w', [size, vocab_size])

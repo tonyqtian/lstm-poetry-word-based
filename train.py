@@ -15,6 +15,8 @@ from collections import namedtuple
 import json
 import glob
 
+import matplotlib.pyplot as plt
+
 '''
     Small config:
     init_scale = 0.1
@@ -67,10 +69,10 @@ nn_config = {
     'init_scale': 0.1,
     'max_grad_norm': 5,
     'num_layers': 2,
-    'num_steps': 3,
-    'hidden_size': 400,
+    'num_steps': 5,
+    'hidden_size': 40,
     'keep_prob': .6,
-    'batch_size': 2,
+    'batch_size': 1,
     'vocab_size': 150
 }
 
@@ -97,20 +99,21 @@ def run_epoch(session, m, data, eval_op, verbose=False):
                                       m.initial_state: state})
         costs += cost
         iters += m.num_steps
+        perplexity = np.exp(costs / iters)
 
         if verbose and step % (epoch_size // 10) == 10:
             print("%.3f perplexity: %.3f speed: %.0f wps" %
-                  (step * 1.0 / epoch_size, np.exp(costs / iters),
+                  (step * 1.0 / epoch_size, perplexity,
                    iters * m.batch_size / (time.time() - start_time)))
-
-    return np.exp(costs / iters)
+                
+    return perplexity
 
 
 def main():
 
     # cleanup input dir
-    #ret = input('Are you sure you want to clean %s [yes|no] ' % (WORK_DIR,))
-    ret = 'yes'
+    ret = input('Are you sure you want to clean %s [yes|no] ' % (WORK_DIR,))
+#     ret = 'yes'
     if ret == 'yes':
         for f in glob.glob(os.path.join(WORK_DIR, '*')):
             if not f.endswith('.txt'):
@@ -126,35 +129,40 @@ def main():
     proc = reader.TextProcessor.from_file(os.path.join(WORK_DIR, 'input.txt'))
     proc.create_vocab(model_config.vocab_size)
     train_data = proc.get_vector()
-    print(train_data)
     np.save(os.path.join(WORK_DIR, 'vocab.npy'), np.array(proc.id2word))
     proc.save_converted(os.path.join(WORK_DIR, 'input.conv.txt'))
 
+    perplexity_graph = []
+    iter_graph = []
+        
     with tf.Graph().as_default(), tf.Session() as session:
-        logwriter = tf.summary.FileWriter(WORK_DIR, session.graph)
+#         logwriter = tf.summary.FileWriter(WORK_DIR, graph=tf.get_default_graph())
         initializer = tf.random_uniform_initializer(-model_config.init_scale,
                                                     model_config.init_scale)
         with tf.variable_scope('model', reuse=None, initializer=initializer):
             m = model.Model(is_training=True, config=model_config)
-
+        
         tf.global_variables_initializer().run()
         saver = tf.train.Saver(tf.global_variables())
-
+        
         for i in range(config.max_max_epoch):
             lr_decay = config.lr_decay ** max(i - config.max_epoch, 0.0)
             m.assign_lr(session, config.learning_rate * lr_decay)
 
             print("Epoch: %d Learning rate: %.3f" % (i + 1, session.run(m.lr)))
             train_perplexity = run_epoch(session, m, train_data, m.train_op,
-                                         verbose=True)
+                                        verbose=True)
             print("Epoch: %d Train Perplexity: %.3f" % (i + 1, train_perplexity))
-            tf.summary.scalar('perplexity', train_perplexity)
-            log_merge = session.run(tf.summary.merge_all())
-            logwriter.add_summary(log_merge)
+            perplexity_graph.append(train_perplexity)
+            iter_graph.append(i)
 
             ckp_path = os.path.join(WORK_DIR, 'model.ckpt')
             saver.save(session, ckp_path, global_step=i)
-
+            
+    plt.plot(iter_graph, perplexity_graph)
+    plt.xlabel('iterations')
+    plt.ylabel('perplexity')
+    plt.show()
 
 if __name__ == "__main__":
     main()
