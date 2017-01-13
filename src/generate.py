@@ -15,9 +15,9 @@ from collections import namedtuple
 
 from model import Model
 
-WORK_DIR = 'data-test'
-#WORK_DIR = 'data-lyrics'
-#WORK_DIR = 'data-eminescu'
+WORK_DIR = '../data-test'
+#WORK_DIR = '../data-lyrics'
+#WORK_DIR = '../data-eminescu'
 
 TEMPERATURE = .7
 INI_TEXT = '''green people floating

@@ -61,9 +61,9 @@ import matplotlib.pyplot as plt
     vocab_size = 10000
 '''
 
-WORK_DIR = 'data-test'
-#WORK_DIR = 'data-lyrics'
-#WORK_DIR = 'data-eminescu'
+WORK_DIR = '../data-test'
+#WORK_DIR = '../data-lyrics'
+#WORK_DIR = '../data-eminescu'
 
 nn_config = {
     'init_scale': 0.1,

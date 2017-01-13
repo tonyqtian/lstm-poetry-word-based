@@ -9,6 +9,7 @@ class Model(object):
         self.num_steps = num_steps = config.num_steps
         size = config.hidden_size
         vocab_size = config.vocab_size
+        self._embedding = None
         
         self._input_data = tf.placeholder(tf.int32, [batch_size, num_steps])
         self._targets = tf.placeholder(tf.int32, [batch_size, num_steps])
@@ -27,6 +28,7 @@ class Model(object):
         with tf.device('/cpu:0'):
             embedding = tf.get_variable('embedding', [vocab_size, size])
             inputs = tf.nn.embedding_lookup(embedding, self._input_data)
+        self._embedding = embedding
 
         if is_training and config.keep_prob < 1:
             inputs = tf.nn.dropout(inputs, config.keep_prob)
@@ -91,3 +93,7 @@ class Model(object):
     @property
     def logits(self):
         return self._logits
+    
+    @property
+    def embedding(self):
+        return self._embedding
