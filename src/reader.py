@@ -6,7 +6,7 @@ import re
 class TextProcessor(object):
     @staticmethod
     def from_file(input_file):
-        with open(input_file, 'r') as fh:
+        with open(input_file, 'r', encoding = 'utf8') as fh:
             text = fh.read()
         return TextProcessor(text)
 

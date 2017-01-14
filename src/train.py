@@ -61,7 +61,8 @@ import matplotlib.pyplot as plt
     vocab_size = 10000
 '''
 
-WORK_DIR = '../data-test'
+WORK_DIR = '../data-chn'
+#WORK_DIR = '../data-test'
 #WORK_DIR = '../data-lyrics'
 #WORK_DIR = '../data-eminescu'
 
@@ -69,11 +70,11 @@ nn_config = {
     'init_scale': 0.1,
     'max_grad_norm': 5,
     'num_layers': 2,
-    'num_steps': 5,
-    'hidden_size': 40,
+    'num_steps': 15,
+    'hidden_size': 512,
     'keep_prob': .6,
-    'batch_size': 1,
-    'vocab_size': 150
+    'batch_size': 16,
+    'vocab_size': 10000
 }
 
 train_config = {
