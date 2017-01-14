@@ -15,13 +15,12 @@ from collections import namedtuple
 
 from model import Model
 
-WORK_DIR = '../data-test'
+WORK_DIR = '../data-chn'
 #WORK_DIR = '../data-lyrics'
 #WORK_DIR = '../data-eminescu'
 
 TEMPERATURE = .7
-INI_TEXT = '''green people floating
-the morning has'''
+INI_TEXT = '''国际 机场'''
 
 
 def weighted_pick(a):
