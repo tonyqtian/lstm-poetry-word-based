@@ -163,7 +163,8 @@ def main():
     plt.plot(iter_graph, perplexity_graph)
     plt.xlabel('iterations')
     plt.ylabel('perplexity')
-    plt.show()
+#     plt.show()
+    plt.savefig('../data-test/w2g.png')
 
 if __name__ == "__main__":
     main()
