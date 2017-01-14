@@ -103,8 +103,9 @@ def main(_):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='LSTM trainer')
     parser.add_argument("--source", default='../data-midi3', help="source folder",)
-    parser.add_argument("--length", default=500, help="generate length",)
+    parser.add_argument("--length", default='500', help="generate length",)
     args = parser.parse_args()
     WORK_DIR = args.source
-    word_length = args.length
+    word_length = int(args.length)
+    
     tf.app.run()
