@@ -94,7 +94,10 @@ def main(_):
 
             probs = session.run(tf.nn.softmax(logits)).flatten()
             w_id = weighted_pick(probs)
-            p.print_word(id2word[w_id])
+            if w_id == -1:
+                pass
+            else:
+                p.print_word(id2word[w_id])
 
         sys.stdout.write('\n\n')
 
