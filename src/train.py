@@ -15,6 +15,9 @@ from collections import namedtuple
 import json
 import glob
 
+import matplotlib
+matplotlib.use('Agg')
+print(matplotlib.get_backend())
 import matplotlib.pyplot as plt
 
 '''
@@ -103,8 +106,8 @@ def run_epoch(session, m, data, eval_op, verbose=False):
         perplexity = np.exp(costs / iters)
 
         if verbose and step % (epoch_size // 10) == 10:
-            print("%.3f perplexity: %.3f speed: %.0f wps" %
-                  (step * 1.0 / epoch_size, perplexity,
+            print("%.2f %% perplexity: %.3f speed: %.0f wps" %
+                  (step * 100.0 / epoch_size, perplexity,
                    iters * m.batch_size / (time.time() - start_time)))
                 
     return perplexity
@@ -164,7 +167,7 @@ def main():
     plt.xlabel('iterations')
     plt.ylabel('perplexity')
 #     plt.show()
-    plt.savefig('../data-test/w2g.png')
+    plt.savefig('../data-test/learning_curve.png')
 
 if __name__ == "__main__":
     main()
