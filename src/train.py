@@ -72,17 +72,17 @@ WORK_DIR = '../data-midi3'
 nn_config = {
     'init_scale': 0.1,
     'max_grad_norm': 5,
-    'num_layers': 2,
+    'num_layers': 4,
     'num_steps': 15,
-    'hidden_size': 400,
-    'keep_prob': .6,
+    'hidden_size': 512,
+    'keep_prob': 0.5,
     'batch_size': 16,
     'vocab_size': 4000
 }
 
 train_config = {
-    'max_max_epoch': 15,
-    'max_epoch': 10,
+    'max_max_epoch': 30,
+    'max_epoch': 15,
     'learning_rate': 1.0,
     'lr_decay': 0.6
 }

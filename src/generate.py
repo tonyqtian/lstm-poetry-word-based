@@ -15,12 +15,13 @@ from collections import namedtuple
 
 from model import Model
 
-WORK_DIR = '../data-chn'
+WORK_DIR = '../data-midi3'
 #WORK_DIR = '../data-lyrics'
 #WORK_DIR = '../data-eminescu'
 
+word_length = 500
 TEMPERATURE = .7
-INI_TEXT = '''国际 机场'''
+INI_TEXT = '''0_b1_65_00 0_b1_64_02 0_b1_06_40 60_b1_65_00 0_b1_64_01 0_b1_06_40 0_b1_26_00 60_b1_07_7f 60_b1_0a_40'''
 
 
 def weighted_pick(a):
@@ -85,7 +86,7 @@ def main(_):
                 m.input_data: x, m.initial_state: state})
 
         p = Printer()
-        for i in range(100):
+        for i in range(word_length):
             x = np.zeros((1, 1), dtype=np.int32)
             x[0, 0] = w_id
             logits, state = session.run([m.logits, m.final_state], {
