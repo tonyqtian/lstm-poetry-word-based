@@ -71,10 +71,10 @@ nn_config = {
     'max_grad_norm': 5,
     'num_layers': 2,
     'num_steps': 15,
-    'hidden_size': 512,
+    'hidden_size': 400,
     'keep_prob': .6,
     'batch_size': 16,
-    'vocab_size': 10000
+    'vocab_size': 18000
 }
 
 train_config = {
