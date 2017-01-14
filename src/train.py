@@ -9,8 +9,8 @@ import numpy as np
 import tensorflow as tf
 import os
 
+import argparse
 import reader
-import model
 from collections import namedtuple
 import json
 import glob
@@ -19,6 +19,8 @@ import matplotlib
 matplotlib.use('Agg')
 print(matplotlib.get_backend())
 import matplotlib.pyplot as plt
+
+import model
 
 '''
     Small config:
@@ -64,10 +66,7 @@ import matplotlib.pyplot as plt
     vocab_size = 10000
 '''
 
-WORK_DIR = '../data-midi3'
-#WORK_DIR = '../data-test'
-#WORK_DIR = '../data-lyrics'
-#WORK_DIR = '../data-eminescu'
+WORK_DIR = '.'
 
 nn_config = {
     'init_scale': 0.1,
@@ -170,4 +169,8 @@ def main():
     plt.savefig(os.path.join(WORK_DIR, 'learning_curve.png'))
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='LSTM trainer')
+    parser.add_argument("--source", default='../data-midi3', help="source folder",)
+    args = parser.parse_args()    
+    WORK_DIR = args.source
     main()

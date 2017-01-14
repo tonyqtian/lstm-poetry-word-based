@@ -6,6 +6,7 @@ from __future__ import print_function
 import numpy as np
 import tensorflow as tf
 
+import argparse
 import reader
 import os
 import sys
@@ -15,11 +16,8 @@ from collections import namedtuple
 
 from model import Model
 
-WORK_DIR = '../data-midi3'
-#WORK_DIR = '../data-lyrics'
-#WORK_DIR = '../data-eminescu'
-
-word_length = 500
+WORK_DIR = '.'
+word_length = 0
 TEMPERATURE = .7
 INI_TEXT = '''0_b1_65_00 0_b1_64_02 0_b1_06_40 60_b1_65_00 0_b1_64_01 0_b1_06_40 0_b1_26_00 60_b1_07_7f 60_b1_0a_40'''
 
@@ -103,4 +101,9 @@ def main(_):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='LSTM trainer')
+    parser.add_argument("--source", default='../data-midi3', help="source folder",)
+    parser.add_argument("--length", default=500, help="generate length",)
+    args = parser.parse_args()
+    WORK_DIR = args.source
     tf.app.run()
