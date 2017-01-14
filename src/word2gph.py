@@ -34,7 +34,7 @@ def plot(embeddings, labels):
         pylab.annotate(label, xy=(x, y), xytext=(5, 2), textcoords='offset points',
                        ha='right', va='bottom',fontproperties=myfont)
 #     pylab.show()
-    pylab.savefig('../data-chn/w2g.png')
+    pylab.savefig(os.path.join(WORK_DIR, 'w2g.png'))
   
 def main(_):
 

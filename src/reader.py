@@ -11,7 +11,8 @@ class TextProcessor(object):
         return TextProcessor(text)
 
     def __init__(self, text):
-        self.words = self._text2words(text)
+#         self.words = self._text2words(text)
+        self.words = [w for w in text.split()]
         self.id2word = None
         self.word2id = None
         self.vector = None

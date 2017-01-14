@@ -64,7 +64,7 @@ import matplotlib.pyplot as plt
     vocab_size = 10000
 '''
 
-WORK_DIR = '../data-chn'
+WORK_DIR = '../data-midi3'
 #WORK_DIR = '../data-test'
 #WORK_DIR = '../data-lyrics'
 #WORK_DIR = '../data-eminescu'
@@ -77,7 +77,7 @@ nn_config = {
     'hidden_size': 400,
     'keep_prob': .6,
     'batch_size': 16,
-    'vocab_size': 18000
+    'vocab_size': 4000
 }
 
 train_config = {
@@ -167,7 +167,7 @@ def main():
     plt.xlabel('iterations')
     plt.ylabel('perplexity')
 #     plt.show()
-    plt.savefig('../data-test/learning_curve.png')
+    plt.savefig(os.path.join(WORK_DIR, 'learning_curve.png'))
 
 if __name__ == "__main__":
     main()
