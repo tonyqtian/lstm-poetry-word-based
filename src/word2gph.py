@@ -34,7 +34,7 @@ def plot(embeddings, labels):
         pylab.annotate(label, xy=(x, y), xytext=(5, 2), textcoords='offset points',
                        ha='right', va='bottom',fontproperties=myfont)
 #     pylab.show()
-    pylab.savefig('../data-test/w2g.png')
+    pylab.savefig('../data-chn/w2g.png')
   
 def main(_):
 
@@ -66,7 +66,7 @@ def main(_):
         tsne = TSNE(perplexity=30, n_components=2, init='pca', n_iter=5000)
         two_d_embeddings = tsne.fit_transform(final_embeddings[0][1:num_points+1])
         words = [id2word[i] for i in range(1, num_points+1)]
-        print(words)
+#         print(words)
         plot(two_d_embeddings, words)
 
 
