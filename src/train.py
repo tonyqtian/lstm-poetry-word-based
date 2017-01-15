@@ -66,22 +66,22 @@ import model
     vocab_size = 10000
 '''
 
-WORK_DIR = '.'
+WORK_DIR = '../data-midi3'
 
 nn_config = {
     'init_scale': 0.1,
     'max_grad_norm': 5,
-    'num_layers': 4,
+    'num_layers': 2,
     'num_steps': 15,
-    'hidden_size': 512,
-    'keep_prob': 0.5,
+    'hidden_size': 400,
+    'keep_prob': 0.6,
     'batch_size': 16,
     'vocab_size': 4000
 }
 
 train_config = {
-    'max_max_epoch': 30,
-    'max_epoch': 15,
+    'max_max_epoch': 15,
+    'max_epoch': 10,
     'learning_rate': 1.0,
     'lr_decay': 0.6
 }
@@ -170,7 +170,31 @@ def main():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='LSTM trainer')
-    parser.add_argument("--source", default='../data-midi3', help="source folder",)
-    args = parser.parse_args()    
-    WORK_DIR = args.source
+    parser.add_argument("--source", help="source folder",)
+    parser.add_argument("--num_layers", help="LSTM layers",)
+    parser.add_argument("--hidden_size", help="LSTM hidden layers size",)
+    parser.add_argument("--keep_prob", help="LSTM dropout",)
+    parser.add_argument("--vocab_size", help="Input data vocab max size",)
+    parser.add_argument("--batch_size", help="Batch size",)
+    parser.add_argument("--num_steps", help="length of every training piece",)
+    parser.add_argument("--epoch", help="Max epoch",)
+        
+    args = parser.parse_args()
+    if args.source:
+        WORK_DIR = args.source
+    if args.num_layers:
+        nn_config['num_layers'] = int(args.num_layers)
+    if args.hidden_size:
+        nn_config['hidden_size'] = int(args.hidden_size)
+    if args.keep_prob:
+        nn_config['keep_prob'] = float(args.keep_prob)
+    if args.vocab_size:
+        nn_config['vocab_size'] = int(args.vocab_size)
+    if args.num_steps:
+        nn_config['num_steps'] = int(args.num_steps)
+    if args.batch_size:
+        nn_config['batch_size'] = int(args.batch_size)
+    if args.epoch:
+        train_config['max_max_epoch'] = int(args.epoch)
+        train_config['max_epoch'] = int(int(args.epoch) * 0.6)
     main()

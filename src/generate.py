@@ -19,7 +19,7 @@ from model import Model
 WORK_DIR = '.'
 word_length = 0
 TEMPERATURE = .7
-INI_TEXT = '''0_b1_65_00 0_b1_64_02 0_b1_06_40 60_b1_65_00 0_b1_64_01 0_b1_06_40 0_b1_26_00 60_b1_07_7f 60_b1_0a_40'''
+INI_TEXT = '''ocean and what'''
 
 
 def weighted_pick(a):
@@ -84,7 +84,9 @@ def main(_):
                 m.input_data: x, m.initial_state: state})
 
         p = Printer()
-        for i in range(word_length):
+#         print(word2id['<unk>'])
+#         print(id2word[word2id['<unk>']])
+        for _ in range(word_length):
             x = np.zeros((1, 1), dtype=np.int32)
             x[0, 0] = w_id
             logits, state = session.run([m.logits, m.final_state], {
@@ -92,7 +94,7 @@ def main(_):
 
             probs = session.run(tf.nn.softmax(logits)).flatten()
             w_id = weighted_pick(probs)
-            if w_id == -1:
+            if id2word[w_id] == '<unk>':
                 pass
             else:
                 p.print_word(id2word[w_id])
@@ -102,10 +104,13 @@ def main(_):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='LSTM trainer')
-    parser.add_argument("--source", default='../data-midi3', help="source folder",)
-    parser.add_argument("--length", default='500', help="generate length",)
+    parser.add_argument("--source", default='../data-test', help="source folder",)
+    parser.add_argument("--length", default='100', help="generate length",)
+    parser.add_argument("--header", help="header for generation",)
     args = parser.parse_args()
     WORK_DIR = args.source
     word_length = int(args.length)
+    if args.header:
+        INI_TEXT = args.header
     
     tf.app.run()
