@@ -103,7 +103,7 @@ def main(_):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='LSTM trainer')
+    parser = argparse.ArgumentParser(description='LSTM generator')
     parser.add_argument("--source", default='../data-test', help="source folder",)
     parser.add_argument("--length", default='100', help="generate length",)
     parser.add_argument("--header", help="header for generation",)

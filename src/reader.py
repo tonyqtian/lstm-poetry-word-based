@@ -10,9 +10,11 @@ class TextProcessor(object):
             text = fh.read()
         return TextProcessor(text)
 
-    def __init__(self, text):
-#         self.words = self._text2words(text)
-        self.words = [w for w in text.split()]
+    def __init__(self, text, rawEng=False):
+        if rawEng:
+            self.words = self._text2words(text)
+        else:
+            self.words = [w for w in text.split()]
         self.id2word = None
         self.word2id = None
         self.vector = None
