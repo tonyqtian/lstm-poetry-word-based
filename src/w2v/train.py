@@ -10,7 +10,6 @@ import tensorflow as tf
 import os
 
 import argparse
-import reader
 from collections import namedtuple
 import json
 import glob
@@ -21,6 +20,7 @@ print(matplotlib.get_backend())
 import matplotlib.pyplot as plt
 
 import model
+import reader
 
 '''
     Small config:
@@ -66,17 +66,17 @@ import model
     vocab_size = 10000
 '''
 
-WORK_DIR = '../data-midi3'
+WORK_DIR = '../../data-text8'
 
 nn_config = {
     'init_scale': 0.1,
     'max_grad_norm': 5,
     'num_layers': 2,
     'num_steps': 15,
-    'hidden_size': 400,
+    'hidden_size': 40,
     'keep_prob': 0.6,
     'batch_size': 16,
-    'vocab_size': 4000
+    'vocab_size': 400
 }
 
 train_config = {
@@ -86,6 +86,38 @@ train_config = {
     'lr_decay': 0.6
 }
 
+num_steps = 10001
+
+def train_w3v(session, m, data, num_steps, reverse_dictionary, verbose=False):
+    print('Training Word Embedding...')
+    tf.global_variables_initializer().run()
+    print('Initialized')
+    average_loss = 0
+    for step in range(num_steps):
+        batch_data, batch_labels = reader.generate_batch(data, 
+          m.batch_size, m.num_skips, m.skip_window)
+        feed_dict = {m.train_dataset : batch_data, m.train_labels : batch_labels}
+        _, l = session.run([m.optimizer, m.loss], feed_dict=feed_dict)
+        average_loss += l
+        if step % 2000 == 0:
+            if step > 0:
+                average_loss = average_loss / 2000
+            # The average loss is an estimate of the loss over the last 2000 batches.
+            print('Average loss at step %d: %f' % (step, average_loss))
+            average_loss = 0
+        # note that this is expensive (~20% slowdown if computed every 500 steps)
+        if step % 10000 == 0:
+            sim = m.similarity.eval()
+            for i in range(m.valid_size):
+                valid_word = reverse_dictionary[m.valid_examples[i]]
+                top_k = 8 # number of nearest neighbors
+                nearest = (-sim[i, :]).argsort()[1:top_k+1]
+                log = 'Nearest to %s:' % valid_word
+                for k in range(top_k):
+                    close_word = reverse_dictionary[nearest[k]]
+                    log = '%s %s,' % (log, close_word)
+                print(log)
+    return m.normalized_embeddings.eval()
 
 def run_epoch(session, m, data, eval_op, verbose=False):
     epoch_size = ((len(data) // m.batch_size) - 1) // m.num_steps
@@ -131,7 +163,7 @@ def main():
 
     proc = reader.TextProcessor.from_file(os.path.join(WORK_DIR, 'input.txt'))
     proc.create_vocab(model_config.vocab_size)
-    train_data = proc.get_vector()
+    train_data = proc.get_vector()  # [11 22 34 456 124 852 412 45 325 ... ]
     np.save(os.path.join(WORK_DIR, 'vocab.npy'), np.array(proc.id2word))
     proc.save_converted(os.path.join(WORK_DIR, 'input.conv.txt'))
 
@@ -140,13 +172,21 @@ def main():
         
     with tf.Graph().as_default(), tf.Session() as session:
 #         logwriter = tf.summary.FileWriter(WORK_DIR, graph=tf.get_default_graph())
+        with tf.variable_scope('model', reuse=None):
+            w2v = model.Word2Vec(model_config.vocab_size, model_config.hidden_size)
+        final_embeddings = train_w3v(session, w2v, train_data, num_steps, 
+                                     proc.id2word, verbose=True)
+#         print(final_embeddings)
+            
         initializer = tf.random_uniform_initializer(-model_config.init_scale,
                                                     model_config.init_scale)
         with tf.variable_scope('model', reuse=None, initializer=initializer):
-            m = model.Model(is_training=True, config=model_config)
+            m = model.Model(is_training=True, config=model_config, embd=final_embeddings)
         
         tf.global_variables_initializer().run()
         saver = tf.train.Saver(tf.global_variables())
+#         print(m.embedding.eval())
+#         raise(RuntimeError)
         
         for i in range(config.max_max_epoch):
             lr_decay = config.lr_decay ** max(i - config.max_epoch, 0.0)

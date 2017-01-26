@@ -5,14 +5,14 @@ Created on Jan 13, 2017
 @author: tonyq
 '''
 
-import numpy as np
-import tensorflow as tf
 import matplotlib
 matplotlib.use('Agg')
 print(matplotlib.get_backend())
 from matplotlib import pylab
 from matplotlib import font_manager
 from sklearn.manifold import TSNE
+import numpy as np
+import tensorflow as tf
 
 import argparse
 import os

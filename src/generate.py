@@ -17,6 +17,7 @@ from collections import namedtuple
 from model import Model
 
 WORK_DIR = '.'
+OUTPUT = ''
 word_length = 0
 TEMPERATURE = .7
 INI_TEXT = '''ocean and what'''
@@ -100,16 +101,20 @@ def main(_):
                 p.print_word(id2word[w_id])
 
         sys.stdout.write('\n\n')
+        print('Finished.')
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='LSTM generator')
     parser.add_argument("--source", default='../data-test', help="source folder",)
-    parser.add_argument("--length", default='100', help="generate length",)
+    parser.add_argument("--output", default='sample.txt', help="output filename",)
+    parser.add_argument("--length", default=100, type=int, help="generate length",)
     parser.add_argument("--header", help="header for generation",)
+
     args = parser.parse_args()
     WORK_DIR = args.source
-    word_length = int(args.length)
+    OUTPUT = os.path.join(WORK_DIR, args.output)
+    word_length = args.length
     if args.header:
         INI_TEXT = args.header
     
