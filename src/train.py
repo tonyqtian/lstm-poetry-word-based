@@ -116,7 +116,6 @@ def main():
 
     # cleanup input dir
     ret = input('Are you sure you want to clean %s [yes|no] ' % (WORK_DIR,))
-#     ret = 'yes'
     if ret == 'yes':
         for f in glob.glob(os.path.join(WORK_DIR, '*')):
             if not f.endswith('.txt'):
